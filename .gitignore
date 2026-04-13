@@ -1,0 +1,15 @@
+# Raw datasets
+data/raw/
+
+# Training outputs
+checkpoints/
+results/
+logs/
+
+# Python
+__pycache__/
+*.pyc
+
+# Archives
+*.zip
+*.tar.gz

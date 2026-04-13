@@ -1,0 +1,23 @@
+dataset:
+  name: amazon_webcam
+  img_size: 256
+  channels: 3
+  data_root: data/raw
+
+model:
+  ngf: 64
+  ndf: 64
+  n_blocks: 9
+  n_downsample: 2
+  n_layers_D: 3
+
+training:
+  epochs: 200
+  lr: 0.0002
+  batch_size: 1
+  lambda_cycle: 10.0
+  lambda_identity: 5.0
+  decay_epoch: 100
+  pool_size: 50
+  vis_freq: 10
+  save_freq: 50
