@@ -2,7 +2,7 @@ dataset:
   name: mnist_usps
   img_size: 32
   channels: 3
-  data_root: data/raw
+  data_root: /scratch-share/QIAO0042/models/acv/UDA_trans/data/raw
 
 model:
   ngf: 32
@@ -12,12 +12,12 @@ model:
   n_layers_D: 2
 
 training:
-  epochs: 100
+  epochs: 50
   lr: 0.0002
   batch_size: 4
   lambda_cycle: 10.0
   lambda_identity: 5.0
-  decay_epoch: 50
+  decay_epoch: 25
   pool_size: 50
   vis_freq: 10
-  save_freq: 20
+  save_freq: 25
