@@ -2,7 +2,7 @@ dataset:
   name: svhn_mnist
   img_size: 32
   channels: 3
-  data_root: /scratch-share/QIAO0042/models/acv/UDA_trans/data/raw
+  data_root: /scratch/users/ntu/qiao0042/models/acv/UDA_transfer/data/raw
 
 model:
   ngf: 32
@@ -14,7 +14,7 @@ model:
 training:
   epochs: 50
   lr: 0.0002
-  batch_size: 4
+  batch_size: 256
   lambda_cycle: 10.0
   lambda_identity: 5.0
   decay_epoch: 25

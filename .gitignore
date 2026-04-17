@@ -3,8 +3,10 @@ data/raw/
 
 # Training outputs
 checkpoints/
+checkpoints_task2/
 results/
 logs/
+scripts/
 
 # Python
 __pycache__/
@@ -13,3 +15,6 @@ __pycache__/
 # Archives
 *.zip
 *.tar.gz
+
+wandb/
+data_translated/

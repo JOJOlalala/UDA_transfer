@@ -1,27 +1,29 @@
 #!/bin/bash
-#SBATCH --partition=MGPU-TC2
-#SBATCH --qos=normal
-#SBATCH --gres=gpu:1
-#SBATCH --mem=30G
-#SBATCH --cpus-per-task=4
-#SBATCH --nodes=1
-#SBATCH --time=06:00:00
-#SBATCH --job-name=cgan_spec
-#SBATCH --output=logs/spectral_%j.out
-#SBATCH --error=logs/spectral_%j.err
+#PBS -q normal
+#PBS -j oe
+#PBS -P personal-qiao0042
+#PBS -l select=1:ngpus=1:ncpus=16:mem=110gb
+#PBS -l walltime=24:00:00
+#PBS -N cgan_spec
 
-cd /scratch-share/QIAO0042/models/acv/UDA_trans
+cd /scratch/users/ntu/qiao0042/models/acv/UDA_transfer
+PYTHON=/home/users/ntu/qiao0042/scratch/conda/envs/uda_cyclegan/bin/python
 
-PYTHON=/home/msai/qiao0042/QIAO0042/.conda/envs/uda_cyclegan/bin/python
+# SSH tunnel for wandb
+PROXY_PORT=$((20000 + RANDOM % 10000))
+ssh -f -N -D $PROXY_PORT -o StrictHostKeyChecking=no -o ConnectTimeout=5 asp2a-login-ntu01 2>/dev/null
+export HTTPS_PROXY=socks5h://localhost:$PROXY_PORT
+export HTTP_PROXY=socks5h://localhost:$PROXY_PORT
 
 echo "=== Spectral CycleGAN ==="
 echo "Date: $(date) | Node: $(hostname)"
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader
 
-DATASET=${1:-mnist_usps}
-BETA=${2:-0.05}
+# Pass via: qsub -v DATASET=mnist_usps,BETA=0.05 scripts/train_spectral.sh
+DATASET=${DATASET:-mnist_usps}
+BETA=${BETA:-0.05}
 
-$PYTHON train.py \
+$PYTHON -u train.py \
     --config configs/${DATASET}.yaml \
     --mode spectral \
     --beta ${BETA}

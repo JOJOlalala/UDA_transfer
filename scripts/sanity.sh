@@ -1,17 +1,13 @@
 #!/bin/bash
-#SBATCH --partition=MGPU-TC2
-#SBATCH --qos=normal
-#SBATCH --gres=gpu:1
-#SBATCH --mem=30G
-#SBATCH --cpus-per-task=8
-#SBATCH --nodes=1
-#SBATCH --time=00:30:00
-#SBATCH --job-name=sanity
-#SBATCH --output=/scratch-share/QIAO0042/models/acv/UDA_trans/logs/sanity_%j.out
-#SBATCH --error=/scratch-share/QIAO0042/models/acv/UDA_trans/logs/sanity_%j.err
+#PBS -q normal
+#PBS -j oe
+#PBS -P personal-qiao0042
+#PBS -l select=1:ngpus=1:ncpus=16:mem=110gb
+#PBS -l walltime=02:00:00
+#PBS -N sanity
 
-PYTHON=/home/msai/qiao0042/QIAO0042/.conda/envs/uda_cyclegan/bin/python
-cd /scratch-share/QIAO0042/models/acv/UDA_trans
+cd /scratch/users/ntu/qiao0042/models/acv/UDA_transfer
+PYTHON=/home/users/ntu/qiao0042/scratch/conda/envs/uda_cyclegan/bin/python
 
 echo "=== Sanity: 5-epoch Pixel CycleGAN on MNIST->USPS ==="
 echo "Node: $(hostname) | GPU: $(nvidia-smi --query-gpu=name --format=csv,noheader)"

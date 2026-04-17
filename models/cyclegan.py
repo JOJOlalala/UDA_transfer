@@ -8,6 +8,7 @@ from torch.optim import Adam
 from torch.optim.lr_scheduler import LambdaLR
 
 from models.generator import ResNetGenerator
+from models.generator_unet import UNetGenerator
 from models.discriminator import PatchGANDiscriminator
 from utils.losses import lsgan_loss_D, lsgan_loss_G, cycle_consistency_loss, identity_loss
 from utils.image_pool import ImagePool
@@ -38,16 +39,18 @@ class CycleGANTrainer:
         tc = config["training"]
 
         # Build models
-        self.G_AB = ResNetGenerator(
-            input_nc=3, output_nc=3,
-            ngf=mc["ngf"], n_blocks=mc["n_blocks"],
-            n_downsample=mc.get("n_downsample", 2),
-        ).to(self.device)
-        self.G_BA = ResNetGenerator(
-            input_nc=3, output_nc=3,
-            ngf=mc["ngf"], n_blocks=mc["n_blocks"],
-            n_downsample=mc.get("n_downsample", 2),
-        ).to(self.device)
+        gen_type = mc.get("generator", "resnet")
+        if gen_type == "unet":
+            gen_cls = UNetGenerator
+            gen_kwargs = dict(input_nc=3, output_nc=3, ngf=mc["ngf"],
+                              n_downsample=mc.get("n_downsample", 4))
+        else:
+            gen_cls = ResNetGenerator
+            gen_kwargs = dict(input_nc=3, output_nc=3, ngf=mc["ngf"],
+                              n_blocks=mc["n_blocks"],
+                              n_downsample=mc.get("n_downsample", 2))
+        self.G_AB = gen_cls(**gen_kwargs).to(self.device)
+        self.G_BA = gen_cls(**gen_kwargs).to(self.device)
         self.D_A = PatchGANDiscriminator(
             input_nc=3, ndf=mc["ndf"], n_layers=mc["n_layers_D"],
         ).to(self.device)

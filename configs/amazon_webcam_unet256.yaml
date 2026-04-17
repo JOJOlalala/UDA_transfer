@@ -1,0 +1,24 @@
+dataset:
+  name: amazon_webcam
+  img_size: 256
+  channels: 3
+  data_root: /scratch/users/ntu/qiao0042/models/acv/UDA_transfer/data/raw
+
+model:
+  generator: unet
+  ngf: 64
+  ndf: 64
+  n_downsample: 7
+  n_blocks: 9
+  n_layers_D: 3
+
+training:
+  epochs: 100
+  lr: 0.0002
+  batch_size: 4
+  lambda_cycle: 10.0
+  lambda_identity: 0.0
+  decay_epoch: 50
+  pool_size: 50
+  vis_freq: 20
+  save_freq: 50

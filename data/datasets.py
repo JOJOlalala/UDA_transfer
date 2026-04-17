@@ -109,9 +109,16 @@ def get_transform_small_gray(img_size=32):
 
 
 def get_transform_large(img_size=256):
-    """Transform for large RGB datasets (Office-31, PACS)."""
+    """Transform for large RGB datasets (Office-31, PACS).
+
+    Resize to slightly larger then random-crop to img_size — matches the
+    original CycleGAN paper's regularization. Without random crop, D
+    overfits the small Office-Home / PACS training sets.
+    """
+    load_size = int(img_size * 1.12)  # 256→286, 128→143
     return T.Compose([
-        T.Resize((img_size, img_size)),
+        T.Resize((load_size, load_size)),
+        T.RandomCrop(img_size),
         T.RandomHorizontalFlip(),
         T.ToTensor(),
         T.Normalize([0.5] * 3, [0.5] * 3),
@@ -176,6 +183,11 @@ def build_dataset(config, split="train"):
         ds_A = FolderImageDataset(os.path.join(root, "pacs", "photo"), transform=tf)
         ds_B = FolderImageDataset(os.path.join(root, "pacs", "sketch"), transform=tf)
 
+    elif name == "art_realworld":
+        tf = get_transform_large(img_size) if is_train else get_transform_large_test(img_size)
+        ds_A = FolderImageDataset(os.path.join(root, "office_home", "art"), transform=tf)
+        ds_B = FolderImageDataset(os.path.join(root, "office_home", "real_world"), transform=tf)
+
     else:
         raise ValueError(f"Unknown dataset: {name}")
 
@@ -190,7 +202,7 @@ def build_dataloader(config, split="train"):
         dataset,
         batch_size=batch_size,
         shuffle=(split == "train"),
-        num_workers=4,
+        num_workers=16,
         pin_memory=True,
         drop_last=(split == "train"),
     )
